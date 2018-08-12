@@ -1,0 +1,8 @@
+draft/*.pdf
+draft/*.log
+/*.pdf
+/*.log
+*.blg
+*.synctex.gz
+*.out
+*.aux
