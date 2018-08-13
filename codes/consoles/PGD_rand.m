@@ -1,7 +1,7 @@
 %%% PGD: random non-negative least squares
 clear all; close all; clc
 ALG = 'PGD_rand';
-addpath(genpath('/Users/junziz/Desktop/Programming/nonexp_aa/codes'));
+addpath(genpath('..'));
 rng(456);
 m = 500;
 n = 1000;

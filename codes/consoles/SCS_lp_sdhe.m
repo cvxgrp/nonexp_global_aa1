@@ -1,7 +1,7 @@
 %%% SCS: LP by SDHE
 clear all; close all; clc;
 ALG = 'SCS_lp_sdhe';
-addpath(genpath('/Users/junziz/Desktop/Programming/nonexp_aa/codes'));
+addpath(genpath('..'));
 rng(456);
 m0 = 500; n0 = 700;
 n = m0 + n0 + 1;

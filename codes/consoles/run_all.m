@@ -1,4 +1,5 @@
 %% Run all scripts
+warning('off', 'all');
 GD_logreg;
 HB_qp_ill_precond;
 AP_lp_sdhe;

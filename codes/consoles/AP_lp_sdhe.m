@@ -1,7 +1,7 @@
 %%% AP: LP by SDHE
 clear all; close all; clc;
 ALG = 'AP_lp_sdhe';
-addpath(genpath('/Users/junziz/Desktop/Programming/nonexp_aa/codes'));
+addpath(genpath('..'));
 rng(456);
 m0 = 500; n0 = 1000;
 A0 = sprandn(m0, n0, 0.1);

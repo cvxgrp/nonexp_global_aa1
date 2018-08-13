@@ -1,7 +1,7 @@
 %% Value Iteration: random instances
 clear all; close all; clc;
 ALG = 'VI_rand';
-addpath(genpath('/Users/junziz/Desktop/Programming/nonexp_aa/codes'));
+addpath(genpath('..'));
 rng(456);
 data = struct();
 S = 300; 

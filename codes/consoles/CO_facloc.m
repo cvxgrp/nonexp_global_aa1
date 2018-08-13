@@ -1,7 +1,7 @@
 %%% CO: facility location
 clear all; close all; clc
 ALG = 'CO_facloc';
-addpath(genpath('/Users/junziz/Desktop/Programming/nonexp_aa/codes'));
+addpath(genpath('..'));
 rng(456);
 m = 500;
 n = 300;

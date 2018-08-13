@@ -1,7 +1,7 @@
 %%% GD: regularized logistic regression
 clear all; close all; clc
 ALG = 'GD_logreg';
-addpath(genpath('/Users/junziz/Desktop/Programming/nonexp_aa/codes'));
+addpath(genpath('..'));
 rng(456);
 data.xi = importdata('data/madelon_train.data.txt');
 data.yi = importdata('data/madelon_train.labels.txt');

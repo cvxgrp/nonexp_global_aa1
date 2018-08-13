@@ -1,7 +1,7 @@
 %%% HB: random quadratic program / linear system
 clear all; close all; clc
 ALG = 'HB_qp_ill_precond';
-addpath(genpath('/Users/junziz/Desktop/Programming/nonexp_aa/codes'));
+addpath(genpath('..'));
 rng(456);
 n = 1000;
 tol = 0.005;

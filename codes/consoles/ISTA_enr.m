@@ -1,7 +1,7 @@
 %%% ISTA: elastic net regression
 clear all; close all; clc
 ALG = 'ISTA_enr';
-addpath(genpath('/Users/junziz/Desktop/Programming/nonexp_aa/codes'));
+addpath(genpath('..'));
 rng(456);
 q = 500;
 p = 1000; 

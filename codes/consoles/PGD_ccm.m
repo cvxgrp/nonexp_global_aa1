@@ -1,7 +1,7 @@
 %%% PGD: convex-concave matrix games
 clear all; close all; clc
 ALG = 'PGD_ccm';
-addpath(genpath('/Users/junziz/Desktop/Programming/nonexp_aa/codes'));
+addpath(genpath('..'));
 rng(456);
 mp = 500;
 np = 1500;
