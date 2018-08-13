@@ -70,8 +70,8 @@ ylim_max = max([res_aa1; res_aa1_safe; res_origin] / res0)*2;
 xlabel('iteration number', 'FontSize', 18);
 ylabel('$\|g(x^k)\|_2/\|g(x^0)\|_2$', 'Interpreter', 'latex', ...
      'FontSize', 18);
-exp_max = ceil(log(ylim_max) / log(10));
-exp_min = floor(log(ylim_min) / log(10));
+exp_max = min(ceil(log(ylim_max) / log(10)), 5);
+exp_min = max(floor(log(ylim_min) / log(10)), -16);
 ylim([10^exp_min, 10^exp_max])
 set(gca,'YTick',10.^(exp_min:2:exp_max));
 legend('aa1', 'aa1-safe', 'original');
@@ -95,8 +95,8 @@ ylim([ylim_min, ylim_max])
 xlabel('time (seconds)', 'FontSize', 18);
 ylabel('$\|g(x^k)\|_2/\|g(x^0)\|_2$', 'Interpreter', 'latex', ...
     'FontSize', 18);
-exp_max = ceil(log(ylim_max) / log(10));
-exp_min = floor(log(ylim_min) / log(10));
+exp_max = min(ceil(log(ylim_max) / log(10)), 5);
+exp_min = max(floor(log(ylim_min) / log(10)), -16);
 ylim([10^exp_min, 10^exp_max])
 set(gca,'YTick',10.^(exp_min:2:exp_max));
 legend('aa1', 'aa1-safe', 'original');
