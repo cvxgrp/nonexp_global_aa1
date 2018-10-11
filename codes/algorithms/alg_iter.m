@@ -29,7 +29,8 @@ elseif strcmp(algorithm, 'aa1')
     mem_size = param.mem_size;
     Smem = [];
     Ymem = [];
-    g0 = x0 - F(x0);
+    Fx0 = F(x0);
+    g0 = x0 - Fx0;
     t0 = cputime;
     t_rec(1) = 0;
     for i = 1 : itermax
@@ -37,22 +38,22 @@ elseif strcmp(algorithm, 'aa1')
             fprintf('iteration = %d\n', i);
         end
         if i == 1
-            x1 = F(x0);
+            x1 = Fx0;
         else
             x1 = x0 - g0 - (Smem - Ymem) * ((Smem'*Ymem) \ (Smem' * g0));
         end
+        Fx1 = F(x1);
         if i <= mem_size - 1
             Smem(:, i) = x1 - x0;
-            Ymem(:, i) = x1 - F(x1) - g0;
+            Ymem(:, i) = x1 - Fx1 - g0;
         else
             Smem = [Smem(:, 2:end), x1 - x0];
-            Ymem = [Ymem(:, 2:end), x1 - F(x1) - g0];
+            Ymem = [Ymem(:, 2:end), x1 - Fx1 - g0];
         end
         x_rec(:, i+1) = x1;
         t_rec(i+1) = cputime - t0;
         x0 = x1;
-        g0 = x0 - F(x0);
-        
+        g0 = x0 - Fx1; 
     end
     
 elseif strcmp(algorithm, 'aa1-safe')
@@ -61,7 +62,8 @@ elseif strcmp(algorithm, 'aa1-safe')
     tau = param.tau;
     D = param.D;
     epsilon = param.epsilon;
-    g0 = x0 - F(x0);
+    Fx0 = F(x0);
+    g0 = x0 - Fx0;
     Ubar = norm(g0);
     Shat_mem = [];
     H_vecs1 = [];
@@ -78,26 +80,40 @@ elseif strcmp(algorithm, 'aa1-safe')
             fprintf('###iteration = %d\n', i);
         end
         if i == 1
-            x1 = F(x0);
+            x1 = Fx0;
         else
             x1 = x0 - H_AA(g0, H_vecs1, H_vecs2);
         end
+        % update using the AA trial update
+        s0 = x1 - x0;
+        Fx1 = F(x1);
+        g1 = x1 - Fx1;
+        y0 = g1 - g0;
         
         %%% Safeguard checking
         Ubar0 = norm(g0);
         if Ubar0 <= D * Ubar * (count+1)^(-1-epsilon) || i == 1
             count = count + 1;
+            x0 = x1;
+            Fx0 = Fx1;
         else
             rec.safeguard = [rec.safeguard, i];
-            x1 = beta * x0 + (1-beta) * F(x0);
+            x1 = beta * x0 + (1-beta) * Fx0;
+            x0 = x1;
+            Fx0 = F(x0);
         end
-        x_rec(:, i+1) = x1;
+        x_rec(:, i+1) = x0;
         t_rec(i+1) = cputime - t0;
-        s0 = x1 - x0;
-        g1 = x1 - F(x1);
-        y0 = g1 - g0;
-        x0 = x1;
-        g0 = x0 - F(x0);
+        g_1 = g0; % maintain g_{k-1} for Powell's trick
+        g0 = x0 - Fx0;
+
+%         s0 = x1 - x0;
+%         x0 = x1;
+%         Fx0 = F(x0);
+%         g1 = x0 - Fx0;
+%         y0 = g1 - g0;
+%         g_1 = g0; % maintain g_{k-1} for Powell's trick
+%         g0 = g1;
         
         %%% Restart checking
         if m <= mem_size
@@ -127,7 +143,7 @@ elseif strcmp(algorithm, 'aa1-safe')
         %%% Powell regularization
         gamma0 = s0hat' * H_AA(y0, H_vecs1, H_vecs2) / norm(s0hat)^2;
         theta0 = phi(gamma0, theta); 
-        y0tilde = theta0 * y0 - (1-theta0) * g0;
+        y0tilde = theta0 * y0 - (1-theta0) * g_1;
         
         %%% Update H_vecs
         Hytilde = H_AA(y0tilde, H_vecs1, H_vecs2);

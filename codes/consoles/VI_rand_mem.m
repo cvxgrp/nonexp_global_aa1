@@ -4,8 +4,8 @@ ALG = 'VI_rand_mem';
 addpath(genpath('..'));
 rng(456);
 data = struct();
-S = 200; %300;
-A = 100; %200;
+S = 300; %200; %300;
+A = 200; %100; %200;
 gamma = 0.99;
 P = zeros(S, S, A);
 for a = 1 : A
@@ -22,7 +22,7 @@ x0 = x0 / norm(x0);
 F = @(x)fx(x,data,'vi-rand');
 param.itermax = 50;
 res0 = norm(x0 - F(x0));
-mems = [2, 5, 10, 20, 50];
+mems = [2, 5, 10, 20 ,50];
 
 %% algorithm comparisons
 tol = 1e-5;
