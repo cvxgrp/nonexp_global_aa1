@@ -106,14 +106,6 @@ elseif strcmp(algorithm, 'aa1-safe')
         t_rec(i+1) = cputime - t0;
         g_1 = g0; % maintain g_{k-1} for Powell's trick
         g0 = x0 - Fx0;
-
-%         s0 = x1 - x0;
-%         x0 = x1;
-%         Fx0 = F(x0);
-%         g1 = x0 - Fx0;
-%         y0 = g1 - g0;
-%         g_1 = g0; % maintain g_{k-1} for Powell's trick
-%         g0 = g1;
         
         %%% Restart checking
         if m <= mem_size
