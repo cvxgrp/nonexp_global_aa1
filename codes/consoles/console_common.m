@@ -1,8 +1,13 @@
 function [x_rec_origin, x_rec_aa1, x_rec_aa1_safe, ...
     t_rec_origin0, t_rec_aa10, t_rec_aa1_safe0, rec_aa1_safe] ...
-    = console_common(tol, x0, F, param, res0, ALG)
+    = console_common(tol, x0, F, param, res0, ALG, ratio_origin)
 %% Algorithms
-[x_rec_origin, t_rec_origin] = alg_iter(x0, F, param, 'original');
+% ratio_origin (>=1): run the original algorithm for ratio_origin times 
+% the iteration numbers of the aa1 and aa1-safe algorithms (useful only for
+% plotting purposes, otherwise just set to 1)
+param_origin = param;
+param_origin.itermax = param.itermax * ratio_origin;
+[x_rec_origin, t_rec_origin] = alg_iter(x0, F, param_origin, 'original');
 [x_rec_aa1, t_rec_aa1] = alg_iter(x0, F, param, 'aa1');
 param.theta = 0.01;
 param.tau = 0.001;
@@ -10,13 +15,13 @@ param.D = 1e6;
 param.epsilon = 1e-6;
 [x_rec_aa1_safe, t_rec_aa1_safe, rec_aa1_safe] ...
     = alg_iter(x0, F, param, 'aa1-safe');
-res_origin = zeros(param.itermax+1, 1);
+res_origin = zeros(param_origin.itermax+1, 1);
 res_aa1 = zeros(param.itermax+1, 1);
 res_aa1_safe = zeros(param.itermax+1, 1);
 
 %% Residual computation
 count_origin = 1;
-for i = 1 : param.itermax+1
+for i = 1 : param_origin.itermax+1
     res_origin(i) = norm(x_rec_origin(:,i) - F(x_rec_origin(:,i)));
     count_origin = count_origin + 1;
     if res_origin(i) < tol * res0 ...
@@ -46,16 +51,23 @@ for i = 1 : param.itermax+1
     end
 end
 
-t_rec_origin0 = t_rec_origin;
+t_rec_origin0 = t_rec_origin(1:param.itermax+1);
 t_rec_aa10 = t_rec_aa1;
 t_rec_aa1_safe0 = t_rec_aa1_safe;
 
-res_origin = res_origin(1:min(count_origin, param.itermax+1));
+res_origin = res_origin(1:min(count_origin, param_origin.itermax+1));
 res_aa1 = res_aa1(1:min(count_aa1, param.itermax+1));
 res_aa1_safe = res_aa1_safe(1:min(count_aa1_safe, param.itermax+1));
 t_rec_origin = t_rec_origin(1:length(res_origin));
 t_rec_aa1 = t_rec_aa1(1:length(res_aa1));
 t_rec_aa1_safe = t_rec_aa1_safe(1:length(res_aa1_safe));
+
+% plot the original curve only to max(itermax, time-aa1, time-aa1-safe)
+t_max = max(t_rec_aa1(end), t_rec_aa1_safe(end));
+count_origin = max(sum(t_rec_origin <= t_max), param.itermax+1);
+res_origin = res_origin(1:count_origin);
+t_rec_origin = t_rec_origin(1:count_origin);
+
 
 %% Plots
 % res against iter
@@ -63,7 +75,7 @@ figure;
 semilogy(res_aa1/res0, 'b', 'LineWidth', 2); hold on
 semilogy(res_aa1_safe/res0, 'color', ...
 [0.9100, 0.4100, 0.1700], 'LineWidth', 2);
-semilogy(res_origin/res0, 'r', 'LineWidth', 2);
+semilogy(res_origin(1:param.itermax+1)/res0, 'r', 'LineWidth', 2);
 xlim([0, param.itermax+1]);
 ylim_min = min([res_aa1; res_aa1_safe; res_origin] / res0)/2;
 ylim_max = max([res_aa1; res_aa1_safe; res_origin] / res0)*2;

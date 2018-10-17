@@ -26,7 +26,7 @@ res0 = norm(x0 - F(x0));
 tol = 1e-8;
 [x_rec_origin, x_rec_aa1, x_rec_aa1_safe, ...
     t_rec_origin0, t_rec_aa10, t_rec_aa1_safe0, rec_aa1_safe] ...
-    = console_common(tol, x0, F, param, res0, ALG);
+    = console_common(tol, x0, F, param, res0, ALG, 2);
 
 
 

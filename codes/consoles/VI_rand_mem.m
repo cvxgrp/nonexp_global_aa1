@@ -4,7 +4,7 @@ ALG = 'VI_rand_mem';
 addpath(genpath('..'));
 rng(456);
 data = struct();
-S = 300;
+S = 300; 
 A = 200;
 gamma = 0.99;
 P = zeros(S, S, A);
@@ -27,8 +27,10 @@ mems = [2, 5, 10, 20, 50];
 %% algorithm comparisons
 tol = 1e-5;
 % Algorithms & Residual computation
-[x_rec_origin, t_rec_origin] = alg_iter(x0, F, param, 'original');
-res_origin = zeros(param.itermax+1, 1);
+param_origin = param;
+param_origin.itermax = param.itermax * 2;
+[x_rec_origin, t_rec_origin] = alg_iter(x0, F, param_origin, 'original');
+res_origin = zeros(param_origin.itermax+1, 1);
 res_aa1 = cell(length(mems), 1);
 res_aa1_safe = cell(length(mems), 1);
 t_rec_aa1s = cell(length(mems), 1);
@@ -36,7 +38,7 @@ t_rec_aa1_safes = cell(length(mems), 1);
 
 % original algorithm
 count_origin = 1;
-for i = 1 : param.itermax+1
+for i = 1 : param_origin.itermax+1
     res_origin(i) = norm(x_rec_origin(:,i) - F(x_rec_origin(:,i)));
     count_origin = count_origin + 1;
     if res_origin(i) < tol * res0 ...
@@ -46,7 +48,7 @@ for i = 1 : param.itermax+1
     end
 end
 t_rec_origin0 = t_rec_origin;
-res_origin = res_origin(1:min(count_origin, param.itermax+1));
+res_origin = res_origin(1:min(count_origin, param_origin.itermax+1));
 t_rec_origin = t_rec_origin(1:length(res_origin));
 
 % AA-I & AA-I-safe
@@ -91,13 +93,21 @@ for mem = 1 : length(mems)
     t_rec_aa1_safes{mem} = t_rec_aa1_safe(1:length(res_aa1_safe{mem}));
 end
 
+% plot the original curve only to max(itermax, time-aa1, time-aa1-safe)
+t_max = 0;
+for mem = 1 : length(mems)
+    t_max = max([t_max; t_rec_aa1s{mem}; t_rec_aa1_safes{mem}]);
+end
+count_origin = max(sum(t_rec_origin <= t_max), param.itermax+1);
+res_origin = res_origin(1:count_origin);
+t_rec_origin = t_rec_origin(1:count_origin);
 
 
 %% Plots
 % res against iter
 colors = ['b', 'm', 'k', 'y', 'g'];
 figure;
-semilogy(res_origin/res0, 'r', 'LineWidth', 2); hold on
+semilogy(res_origin(1:param.itermax+1)/res0, 'r', 'LineWidth', 2); hold on
 for i = 1 : length(mems)
     if i ~= 2
         semilogy(res_aa1{i}/res0, [colors(i), '-.'], 'LineWidth', 2)
